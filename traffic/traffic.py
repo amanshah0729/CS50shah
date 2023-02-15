@@ -1,9 +1,10 @@
 import cv2
+print("please")
 import numpy as np
 import os
 import sys
 import tensorflow as tf
-
+print("test")
 from sklearn.model_selection import train_test_split
 
 EPOCHS = 10
@@ -14,7 +15,7 @@ TEST_SIZE = 0.4
 
 
 def main():
-
+    print("in the main")
     # Check command-line arguments
     if len(sys.argv) not in [2, 3]:
         sys.exit("Usage: python traffic.py data_directory [model.h5]")
@@ -58,6 +59,26 @@ def load_data(data_dir):
     be a list of integer labels, representing the categories for each of the
     corresponding `images`.
     """
+    images = []
+    labels = []
+    directories = os.listdir(data_dir)
+    for directory in directories:
+        os.listdir(directory)
+        for image in directory:
+            img = cv2.imread(image)
+            images.append(img)
+    return 2
+
+
+    images = []
+    labels = []
+    for label in data_dir:
+        for image in label:
+            resized_image = cv2.resize(image, (IMG_WIDTH, IMG_HEIGHT))
+
+            images.append(image.converttoarray)
+            labels.append(label)
+    return (images, labels)
     raise NotImplementedError
 
 
