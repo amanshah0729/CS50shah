@@ -6,6 +6,7 @@ import sys
 import tensorflow as tf
 print("test")
 from sklearn.model_selection import train_test_split
+from time import sleep
 
 EPOCHS = 10
 IMG_WIDTH = 30
@@ -22,7 +23,11 @@ def main():
 
     # Get image arrays and labels for all image files
     images, labels = load_data(sys.argv[1])
-
+    """print("label:")
+    print(labels)
+    print("images")
+    print(images)"""
+    #labels = [1,1,1,1,1,1,1,1,1,1,1]
     # Split data into training and testing sets
     labels = tf.keras.utils.to_categorical(labels)
     x_train, x_test, y_train, y_test = train_test_split(
@@ -63,16 +68,32 @@ def load_data(data_dir):
     labels = []
     directories = os.listdir(data_dir)
     for directory in directories:
-        print(directory)
-        innerdirectory = data_dir + "/" + directory
-        print(innerdirectory)
-
-        os.listdir(innerdirectory)
-        for image in directory:
-            print("image")
-            img = cv2.imread(image)
-            images.append(img)
-    return 2
+        #print(directory)
+        innerdirectory = os.path.join(data_dir, directory)
+        #
+        try:
+            dir_image = os.listdir(innerdirectory)
+            #print(dir_image)
+            
+            for image in dir_image:
+                
+                final_dir = os.path.join(data_dir, directory, image)
+                img = cv2.imread(final_dir, cv2.IMREAD_ANYCOLOR)
+                #print(img)
+                #resized_image = np.resize(img,(IMG_WIDTH,IMG_HEIGHT))
+                resized_image = cv2.resize(img, (IMG_WIDTH, IMG_HEIGHT))
+                if np.shape(resized_image) != (30,30,3):
+                    print(np.shape(resized_image))
+                    sleep(2)
+                #print('appending')
+                images.append(resized_image)
+                labels.append(directory)
+        except NotADirectoryError:
+                pass #is it just exiting loop when this happens? how exactly does try work?
+    """print(images)
+    print(labels)"""
+    return (images, labels)
+  
 
 
     images = []
@@ -93,6 +114,36 @@ def get_model():
     `input_shape` of the first layer is `(IMG_WIDTH, IMG_HEIGHT, 3)`.
     The output layer should have `NUM_CATEGORIES` units, one for each category.
     """
+    
+    model =  tf.keras.models.Sequential([
+        tf.keras.layers.Conv2D(
+        32,(3,3), activation= 'relu', input_shape= (IMG_WIDTH, IMG_HEIGHT, 3)
+        ), 
+
+        tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+
+        tf.keras.layers.Conv2D(
+        32,(3,3), activation= 'relu', input_shape= (14, 14, 32)
+        ), 
+
+        tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+
+        tf.keras.layers.Flatten(),
+
+        tf.keras.layers.Dense(200, activation = 'relu'),
+
+        tf.keras.layers.Dropout(0.1),
+
+        tf.keras.layers.Dense(NUM_CATEGORIES, activation= 'softmax')
+    ])
+    model.summary()
+    
+    model.compile(
+        optimizer= 'adam',
+        loss= 'categorical_crossentropy',
+        metrics= ['accuracy']
+    )
+    return model
     raise NotImplementedError
 
 
