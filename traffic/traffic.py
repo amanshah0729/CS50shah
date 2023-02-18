@@ -63,8 +63,13 @@ def load_data(data_dir):
     labels = []
     directories = os.listdir(data_dir)
     for directory in directories:
-        os.listdir(directory)
+        print(directory)
+        innerdirectory = data_dir + "/" + directory
+        print(innerdirectory)
+
+        os.listdir(innerdirectory)
         for image in directory:
+            print("image")
             img = cv2.imread(image)
             images.append(img)
     return 2
