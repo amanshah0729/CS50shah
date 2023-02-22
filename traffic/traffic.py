@@ -1,10 +1,8 @@
 import cv2
-print("please")
 import numpy as np
 import os
 import sys
 import tensorflow as tf
-print("test")
 from sklearn.model_selection import train_test_split
 from time import sleep
 
